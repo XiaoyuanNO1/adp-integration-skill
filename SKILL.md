@@ -374,6 +374,107 @@ finally:
     client.close()
 ```
 
+### UTF-8 编码处理 ⭐
+
+**重要**：ADP 平台返回的内容是 UTF-8 编码，`adp_client.py` 已经正确处理了编码问题。
+
+#### 已内置的编码处理
+
+```python
+# adp_client.py 中已经正确设置了编码
+response = requests.post(
+    url,
+    json=payload,
+    headers={"Content-Type": "application/json; charset=utf-8"},
+    stream=True,
+    timeout=30
+)
+
+# SSE 流式数据使用 UTF-8 解码
+for line in response.iter_lines(decode_unicode=True):
+    # decode_unicode=True 确保正确解码 UTF-8
+    if line:
+        # 处理中文等多字节字符
+        ...
+```
+
+#### 如果遇到乱码问题
+
+如果你在使用过程中仍然遇到乱码，可以尝试以下方法：
+
+**方法 1：确保终端支持 UTF-8**
+
+```python
+import sys
+import io
+
+# 设置标准输出为 UTF-8
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
+# 然后正常使用
+client = create_client(app_key="YOUR_KEY")
+response = client.chat("你好")
+print(response)  # 不会乱码
+client.close()
+```
+
+**方法 2：显式编码转换（通常不需要）**
+
+```python
+# 如果返回的内容是 bytes 类型（正常情况下不会）
+if isinstance(response, bytes):
+    response = response.decode('utf-8')
+print(response)
+```
+
+**方法 3：文件写入时指定编码**
+
+```python
+# 将对话结果保存到文件
+client = create_client(app_key="YOUR_KEY")
+response = client.chat("你好")
+
+# 写入文件时指定 UTF-8 编码
+with open("chat_result.txt", "w", encoding="utf-8") as f:
+    f.write(response)
+
+client.close()
+```
+
+#### 常见编码问题排查
+
+| 问题现象 | 可能原因 | 解决方案 |
+|---------|---------|---------|
+| 中文显示为 `\u4e2d\u6587` | JSON 未正确解码 | 使用 `json.loads()` 而非 `eval()` |
+| 中文显示为 `???` 或乱码 | 终端不支持 UTF-8 | 设置终端编码或使用方法 1 |
+| 部分中文乱码 | 多字节字符被截断 | 确保使用 `decode_unicode=True` |
+| 写入文件后乱码 | 文件编码不是 UTF-8 | 使用 `open(..., encoding='utf-8')` |
+
+#### 验证编码是否正确
+
+```python
+from adp_client import create_client
+
+client = create_client(app_key="YOUR_KEY")
+
+# 测试中文处理
+test_messages = [
+    "你好",
+    "测试中文编码",
+    "emoji 测试 😊🎉",
+    "特殊字符：©®™€£¥"
+]
+
+for msg in test_messages:
+    response = client.chat(msg)
+    print(f"问: {msg}")
+    print(f"答: {response}")
+    print(f"编码: {response.encode('utf-8')}")  # 查看字节编码
+    print("-" * 50)
+
+client.close()
+```
+
 ### 超时设置
 
 ```python

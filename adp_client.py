@@ -200,8 +200,8 @@ class ADPClient:
                 self.config.base_url,
                 json=body,
                 headers={
-                    "Content-Type": "application/json",
-                    "Accept": "text/event-stream"
+                    "Content-Type": "application/json; charset=utf-8",
+                    "Accept": "text/event-stream; charset=utf-8"
                 },
                 stream=True,
                 timeout=self.config.timeout
