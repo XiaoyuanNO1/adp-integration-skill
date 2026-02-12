@@ -14,6 +14,15 @@ category: integration
 
 # ADP 平台对接 Skill
 
+## 📚 文档导航
+
+- **[API 参考文档](./API_REFERENCE.md)** - 完整的 ADP HTTP SSE 对接 API 文档
+  - 包含所有请求参数、返回事件、错误码的详细说明
+  - 来源：https://www.tencentcloud.com/zh/document/product/1254/69979
+  - 如需查询 API 细节，请查看此文档
+
+---
+
 ## 📋 Skill 概述
 
 本 Skill 提供了与腾讯云 ADP（AI Dialog Platform）平台的完整对接能力，支持通过 HTTP SSE（Server-Sent Events）协议进行流式对话交互。
