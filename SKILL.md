@@ -1,3 +1,12 @@
+---
+name: "ADP 平台对接"
+description: "与腾讯云 ADP (AI Dialog Platform) 平台进行 HTTP SSE 流式对话对接"
+version: "1.0.0"
+author: "xiaoyuan_no1_888"
+tags: ["adp", "ai-agent", "sse", "chat", "integration"]
+category: "integration"
+---
+
 # ADP 平台对接 Skill
 
 ## 📋 Skill 概述
